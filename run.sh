@@ -2,6 +2,8 @@
 
 set -x
 
+eval $(minikube docker-env)
+
 docker build -t simple-service:latest ./simple-service/
 
 minikube image load simple-service

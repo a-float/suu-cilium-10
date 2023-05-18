@@ -17,7 +17,7 @@ eval $(minikube docker-env)
 
 # build and load service image
 docker build -t simple-service:latest ./simple-service/
-minikube image load simple-service
 
 # deploy service
-kubectl create deployment simple-service --image=simple-service
+kubectl apply -f simple-service/deployment.yaml
+

@@ -3,14 +3,15 @@
 set -x
 
 # start minikube
-minikube start --network-plugin=cni --cni=false
+minikube start
+# minikube start --network-plugin=cni --cni=false
 
 # install cilium
-cilium install
+# cilium install
 
 # enable Hubble
-cilium hubble enable
-cilium hubble port-forward&
+# cilium hubble enable
+# cilium hubble port-forward&
 
 # use minikube's docker to be able to load local images
 eval $(minikube docker-env)
@@ -19,5 +20,7 @@ eval $(minikube docker-env)
 docker build -t simple-service:latest ./simple-service/
 
 # deploy service
+kubectl apply -f simple-service/zookeeper.yaml
+kubectl apply -f simple-service/kafka.yaml
 kubectl apply -f simple-service/deployment.yaml
 

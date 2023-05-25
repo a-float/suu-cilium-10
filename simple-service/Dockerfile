@@ -8,4 +8,8 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./src /code
 
-CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--debug"]
+ENV PYTHONUNBUFFERED=1
+
+ENV PYTHONIOENCODING=UTF-8
+
+CMD ["python", "-m", "flask", "run", "--host", "0.0.0.0", "--port", "80", "--debug"]

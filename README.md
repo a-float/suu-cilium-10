@@ -42,6 +42,8 @@ ClusterMesh is Cilium’s multi-cluster implementation that provides the followi
 
 
 ### High level system diagram (TODO redraw and describe)
+![System diagram](README_files/diag1.png "System diagram #1")
+![System diagram](README_files/diag2.png "System diagram #2")
 ![System diagram](README_files/diagram_2.png "System diagram")
 
 

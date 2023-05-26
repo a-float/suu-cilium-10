@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mul-worker
+  labels:
+    app: mul-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mul-worker
+  template:
+    metadata:
+      labels:
+        app: mul-worker
+    spec:
+      containers:
+        - name: mul-worker
+          image: mul-worker
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mul-kafka-worker
+  labels:
+    app: mul-kafka-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mul-kafka-worker
+  template:
+    metadata:
+      labels:
+        app: mul-kafka-worker
+    spec:
+      containers:
+        - name: mul-kafka-worker
+          image: mul-kafka-worker
+          imagePullPolicy: Never

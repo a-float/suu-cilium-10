@@ -13,7 +13,7 @@
   <body style="padding: 0 30%; font-size: 12px; --font-size: 16px">
     <main>
       <h1 style="margin-bottom: 2rem">Calculator</h1>
-      <form action="/calc" method="GET">
+      <form action="/submit" method="POST">
         <div>
           <label>
             a
@@ -45,12 +45,32 @@
 
             <label for="radio3"
               >Multiply
-              <input type="radio" id="radio3" name="op" value="mult" />
+              <input type="radio" id="radio3" name="op" value="mul" />
             </label>
 
             <label for="radio4"
               >Divide
               <input type="radio" id="radio4" name="op" value="div" />
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend style="margin-bottom: 1rem"><b>Protocol</b></legend>
+          <div
+            style="
+              justify-content: space-between;
+              display: flex;
+              flex-wrap: wrap;
+            "
+          >
+            <label for="radio1"
+              >HTTP
+              <input type="radio" id="radio1" name="protocol" value="http" checked />
+            </label>
+
+            <label for="radio2"
+              >Kafka
+              <input type="radio" id="radio2" name="protocol" value="kafka" />
             </label>
           </div>
         </fieldset>

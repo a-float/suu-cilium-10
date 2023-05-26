@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sub-worker
+  labels:
+    app: sub-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sub-worker
+  template:
+    metadata:
+      labels:
+        app: sub-worker
+    spec:
+      containers:
+        - name: sub-worker
+          image: sub-worker
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sub-kafka-worker
+  labels:
+    app: sub-kafka-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sub-kafka-worker
+  template:
+    metadata:
+      labels:
+        app: sub-kafka-worker
+    spec:
+      containers:
+        - name: sub-kafka-worker
+          image: sub-kafka-worker
+          imagePullPolicy: Never

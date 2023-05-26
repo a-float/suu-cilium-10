@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: div-worker
+  labels:
+    app: div-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: div-worker
+  template:
+    metadata:
+      labels:
+        app: div-worker
+    spec:
+      containers:
+        - name: div-worker
+          image: div-worker
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: div-kafka-worker
+  labels:
+    app: div-kafka-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: div-kafka-worker
+  template:
+    metadata:
+      labels:
+        app: div-kafka-worker
+    spec:
+      containers:
+        - name: div-kafka-worker
+          image: div-kafka-worker
+          imagePullPolicy: Never

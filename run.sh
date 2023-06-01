@@ -9,8 +9,7 @@ minikube start --network-plugin=cni --cni=false
 cilium install
 
 # enable Hubble
-cilium hubble enable
-cilium hubble port-forward&
+cilium hubble enable --ui
 
 # use minikube's docker to be able to load local images
 eval $(minikube docker-env)

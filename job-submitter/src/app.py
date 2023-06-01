@@ -13,7 +13,7 @@ admin = AdminClient(conf)
 admin.create_topics([NewTopic(x) for x in ["add", "sub", "mul", "div"]])
 producer = Producer(conf)
 ops = ["add", "sub", "mul", "div"]
-jobs = 0
+jobs = [0]
 
 app = Flask(__name__, template_folder=".")
 
@@ -34,8 +34,8 @@ def submit():
         result = submit_http(op, a, b)
         return jsonify(result=result), 200
     elif protocol == "kafka":
-        submit_kafka(op, a, b)
-        return jsonify(code=200, value=protocol, message=f"Job submitted."), 200
+        job_id = submit_kafka(op, a, b)
+        return jsonify(code=200, value=protocol, message=f"Job submitted.", job_id=job_id), 200
     else:
         return jsonify(code=400, value=protocol, message=f"Invalid protocol. protocol should be one of http, kafka."), 400
     
@@ -55,8 +55,14 @@ def submit_kafka(op, a, b):
         return jsonify(code=400, message=f"Invalid operand. Both a and b should be numbers."), 400
     
 
-    job_id = str(jobs)
-    jobs += 1
+    job_id = str(jobs[0])
+    jobs[0] += 1
 
     producer.produce(op, key=job_id, value=f"{job_id}:{a}:{b}")
-    return jsonify(code=200, id=job_id, a=a, b=b, op=ops[op]), 200
+    return job_id
+
+
+@app.get("/result/<job_id>")
+def get_result(job_id):
+    response = requests.get(f"http://kafka-res-agg-service:5000/result/{job_id}")
+    return jsonify(response.json()), response.status_code

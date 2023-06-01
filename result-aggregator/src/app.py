@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 
 app = Flask(__name__, template_folder=".")
 
@@ -17,3 +17,9 @@ def submit():
     results[job_id] = {"a": a, "b": b, "op": op, "result": result}
 
     return jsonify({"status": "ok"}), 200
+
+@app.get("/result/<job_id>")
+def get_result(job_id):
+    if job_id not in results:
+        return jsonify({"error": "job not found"}), 404
+    return jsonify({"data": results[job_id], "job_id": job_id}), 200

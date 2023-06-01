@@ -31,6 +31,8 @@ docker build -t div-kafka-worker:latest ./calc-workers/div-worker/kafka/
 kubectl apply -f zookeeper.yaml
 kubectl apply -f kafka.yaml
 
+kubectl wait --for=condition=ready pod -l app=kafka
+
 kubectl apply -f calc-workers/add-worker/deployment.yaml
 kubectl apply -f calc-workers/add-worker/service.yaml
 

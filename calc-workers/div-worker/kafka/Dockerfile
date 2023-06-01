@@ -12,4 +12,4 @@ ENV PYTHONUNBUFFERED=1
 
 ENV PYTHONIOENCODING=UTF-8
 
-CMD ["python", "kafka_worker.py"]
+CMD ["python", "kafka-worker.py"]

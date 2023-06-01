@@ -15,7 +15,7 @@ consumer.subscribe(["sub"])
 
 def handle_job(msg):
     job_id, a, b = msg[0].value().decode("utf-8").split(":")
-    return {"job_id": job_id, "a": a, "b": b, "op": "sub", "result": float(a) + float(b)}
+    return {"job_id": job_id, "a": a, "b": b, "op": "sub", "result": float(a) - float(b)}
 
 
 while True:

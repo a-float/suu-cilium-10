@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-submitter
+  labels:
+    app: job-submitter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-submitter
+  template:
+    metadata:
+      labels:
+        app: job-submitter
+    spec:
+      containers:
+        - name: job-submitter
+          image: job-submitter
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80

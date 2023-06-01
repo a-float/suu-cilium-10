@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
+    />
+    <title>Cilium 5+5</title>
+  </head>
+  <body style="padding: 0 30%; font-size: 12px; --font-size: 16px">
+    <main>
+      <h1 style="margin-bottom: 2rem">Calculator</h1>
+      <form action="/submit" method="POST">
+        <div>
+          <label>
+            a
+            <input required type="number" name="a" />
+          </label>
+          <label>
+            b
+            <input required type="number" name="b" />
+          </label>
+        </div>
+        <fieldset>
+          <legend style="margin-bottom: 1rem"><b>Operation</b></legend>
+          <div
+            style="
+              justify-content: space-between;
+              display: flex;
+              flex-wrap: wrap;
+            "
+          >
+            <label for="radio1"
+              >Add
+              <input type="radio" id="radio1" name="op" value="add" checked />
+            </label>
+
+            <label for="radio2"
+              >Subtract
+              <input type="radio" id="radio2" name="op" value="sub" />
+            </label>
+
+            <label for="radio3"
+              >Multiply
+              <input type="radio" id="radio3" name="op" value="mul" />
+            </label>
+
+            <label for="radio4"
+              >Divide
+              <input type="radio" id="radio4" name="op" value="div" />
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend style="margin-bottom: 1rem"><b>Protocol</b></legend>
+          <div
+            style="
+              justify-content: space-between;
+              display: flex;
+              flex-wrap: wrap;
+            "
+          >
+            <label for="radio1"
+              >HTTP
+              <input type="radio" id="radio1" name="protocol" value="http" checked />
+            </label>
+
+            <label for="radio2"
+              >Kafka
+              <input type="radio" id="radio2" name="protocol" value="kafka" />
+            </label>
+          </div>
+        </fieldset>
+        <button type="submit">Submit</button>
+      </form>
+    </main>
+  </body>
+</html>

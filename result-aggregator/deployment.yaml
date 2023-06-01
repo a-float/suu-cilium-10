@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-res-agg
+  labels:
+    app: kafka-res-agg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-res-agg
+  template:
+    metadata:
+      labels:
+        app: kafka-res-agg
+    spec:
+      containers:
+        - name: kafka-res-agg
+          image: kafka-res-agg
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000

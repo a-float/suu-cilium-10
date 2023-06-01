@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: add-worker
+  labels:
+    app: add-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: add-worker
+  template:
+    metadata:
+      labels:
+        app: add-worker
+    spec:
+      containers:
+        - name: add-worker
+          image: add-worker
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: add-kafka-worker
+  labels:
+    app: add-kafka-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: add-kafka-worker
+  template:
+    metadata:
+      labels:
+        app: add-kafka-worker
+    spec:
+      containers:
+        - name: add-kafka-worker
+          image: add-kafka-worker
+          imagePullPolicy: Never

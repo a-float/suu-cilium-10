@@ -1,43 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sub-worker
+  name: div-worker
   labels:
-    app: sub-worker
+    app: div-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sub-worker
+      app: div-worker
   template:
     metadata:
       labels:
-        app: sub-worker
+        app: div-worker
     spec:
       containers:
-        - name: sub-worker
-          image: sub-worker
+        - name: div-worker
+          image: http-worker
           imagePullPolicy: Never
           ports:
             - containerPort: 5000
+          env:
+          - name: OP
+            value: DIV
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sub-kafka-worker
+  name: div-kafka-worker
   labels:
-    app: sub-kafka-worker
+    app: div-kafka-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sub-kafka-worker
+      app: div-kafka-worker
   template:
     metadata:
       labels:
-        app: sub-kafka-worker
+        app: div-kafka-worker
     spec:
       containers:
-        - name: sub-kafka-worker
-          image: sub-kafka-worker
+        - name: div-kafka-worker
+          image: kafka-worker
           imagePullPolicy: Never
+          env:
+          - name: OP
+            value: DIV

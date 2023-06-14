@@ -16,10 +16,13 @@ spec:
     spec:
       containers:
         - name: mul-worker
-          image: mul-worker
+          image: http-worker
           imagePullPolicy: Never
           ports:
             - containerPort: 5000
+          env:
+          - name: OP
+            value: MUL
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,5 +42,8 @@ spec:
     spec:
       containers:
         - name: mul-kafka-worker
-          image: mul-kafka-worker
+          image: kafka-worker
           imagePullPolicy: Never
+          env:
+          - name: OP
+            value: MUL

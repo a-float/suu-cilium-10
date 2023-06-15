@@ -3,7 +3,7 @@
 set -x
 
 # start minikube
-# minikube start --network-plugin=cni --cni=false
+minikube start --network-plugin=cni --cni=false --nodes 2
 
 # install cilium
 # cilium install

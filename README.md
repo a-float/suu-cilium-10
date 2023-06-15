@@ -41,11 +41,14 @@ ClusterMesh is Cilium’s multi-cluster implementation that provides the followi
  - compare the performance of eBPF-based direct routing vs. standard encapsulation in virtual network devices
 
 
-### High level system diagram (TODO redraw and describe)
+### High level system diagram
 ![System diagram](README_files/diag1.png "System diagram #1")
-![System diagram](README_files/diag2.png "System diagram #2")
-![System diagram](README_files/diagram_2.png "System diagram")
 
+Components communicating through Kafka
+
+![System diagram](README_files/diag2.png "System diagram #2")
+
+Components communicating through HTTP/HTTPS
 
 ## 4. Technology selection
 
@@ -117,3 +120,67 @@ Also, each worker will expose an HTTP GET endpoint `/about` with a static HTML r
  - `/logs` - users will use it to read logs 
 
 log_collector will store the logs in a text file within a persistent volume on Kubernetes
+
+
+## 6. Installation method
+
+### Local setup with minikube
+
+Install minikube and docker on your local machine. For example, if you are using Ubuntu, you can download them using `snap`:
+
+```bash
+sudo snap install minikube docker
+```
+
+Install Cilium and Hubble CLI by executing script:
+
+```
+./install-cilium-hubble.sh
+```
+
+Start a minikube cluster and deploy a test application by executing script:
+
+```bash
+./run.sh
+```
+
+
+### TODO: Setup on AWS
+
+
+
+## 7. TODO: How to reproduce - step by step
+  1. Infrastructure as Code approach
+
+## 8. Demo deployment steps
+
+### Access to application GUI
+
+Find `job-submitter` pod name:
+
+```bash
+kubectl get pods
+```
+
+Setup port-forwarding to local port:
+
+```bash
+kubectl port-forward <pod-id> 8000:80
+```
+
+Navigate to http://localhost:8000
+
+#### Access to Hubble dashboard
+
+```bash
+cilium hubble ui
+```
+
+In a single-cluster version this gives a view:
+
+![Hubble screenshot](README_files/hubble_screenshot.png)
+
+
+## 9. TODO: Summary – conclusions
+
+## 10. TODO: References

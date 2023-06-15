@@ -1,0 +1,25 @@
+1. Utworzyć dwa klastry EKS i w SG (security group) dodać inbound rule pozwalający na dostęp z dowolnego adresu i protokołu (tak jest najszybciej)
+2. Dla każdego z nich:
+ - aws eks --region us-east-1 update-kubeconfig --name <eks-nazwa>
+ - kubectl config rename-context <nazwa-kontekstu> <lokalna-nazwa> (<nazwa-kontekstu> do uzyskania z kubectl config get-context)
+ - kubectl -n kube-system delete daemonset aws-node
+3. Instalacja Cilium na pierwszym klastrze:
+ - cilium install --context <lokalna-nazwa-1> --cluster-name <lokalna-nazwa-1> --cluster-id <id-1> (<id-1> >= 1)
+4. Instalacja Cilium na drugim klastrze:
+ - cilium install --context <lokalna-nazwa-2> --inherit-ca <lokalna-nazwa-1> --cluster-name <lokalna-nazwa-2> --cluster-id <id-2> (<id-2> >= 1)
+5. Można poczekać, aż wszystko wstanie:
+ - cilium status --context <lokalna-nazwa>
+6. Uruchomienie ClusterMesh (każdy z klastrów):
+ - cilium clustermesh enable --context <lokalna-nazwa> --service-type LoadBalancer
+7. Połączenie klastrów (wystarczy na jednym z nich):
+ - cilium clustermesh connect --context arn:aws:eks:us-east-1:732165858234:cluster/cilium-cluster-1 --destination-contextarn:aws:eks:us-east-1:732165858234:cluster/cilium-cluster-2
+8. Można poczekać, aż wszystko wstanie:
+ - cilium clustermesh status --context <lokalna-nazwa>
+
+
+Hubble:
+1. Na każdym z klastrów:
+ - cilium hubble enable --ui --context <lokalna-nazwa>
+2. Uruchomienie UI:
+ - cilium hubble ui
+

@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-res-agg-service
+  name: kafka-service
   annotations:
     service.cilium.io/global: "true"
     service.cilium.io/shared: "true"
 spec:
   selector:
-    app: kafka-res-agg
+    app: kafka
   ports:
-    - name: http
-      port: 5000
-      targetPort: 5000
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092

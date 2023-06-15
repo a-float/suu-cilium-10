@@ -4,6 +4,7 @@ metadata:
   name: div-worker
   labels:
     app: div-worker
+    app-role: calc-worker
 spec:
   replicas: 1
   selector:
@@ -16,10 +17,13 @@ spec:
     spec:
       containers:
         - name: div-worker
-          image: div-worker
-          imagePullPolicy: Never
+          image: arczipt/http-worker
+          #imagePullPolicy: Never
           ports:
             - containerPort: 5000
+          env:
+          - name: OP
+            value: DIV
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,5 +43,8 @@ spec:
     spec:
       containers:
         - name: div-kafka-worker
-          image: div-kafka-worker
-          imagePullPolicy: Never
+          image: arczipt/kafka-worker
+          #imagePullPolicy: Never
+          env:
+          - name: OP
+            value: DIV

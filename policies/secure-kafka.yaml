@@ -1,0 +1,38 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "secure-kafka-topics"
+spec:
+  description: "secure kafka"
+  endpointSelector:
+    matchLabels:
+      app: kafka
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: job-submitter
+    toPorts:
+    - ports:
+      - port: "9092"
+        protocol: TCP
+      rules:
+        kafka:
+        - role: "produce"
+          topic: "add"
+  - fromEndpoints:
+    - matchLabels:
+        app-role: calc-worker
+    toPorts:
+    - ports:
+      - port: "9092"
+        protocol: TCP
+      rules:
+        kafka:
+        - role: "consume"
+          topic: "add"
+        - role: "consume"
+          topic: "sub"
+        - role: "consume"
+          topic: "div"
+        - role: "consume"
+          topic: "mul"

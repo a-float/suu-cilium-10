@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: add-service
+  annotations:
+    service.cilium.io/global: "true"
+    service.cilium.io/shared: "true"
+spec:
+  selector:
+    app: add-worker
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sub-service
+  annotations:
+    service.cilium.io/global: "true"
+    service.cilium.io/shared: "true"
+spec:
+  selector:
+    app: sub-worker
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mul-service
+spec:
+  selector:
+    app: mul-worker
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: div-service
+spec:
+  selector:
+    app: div-worker
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000

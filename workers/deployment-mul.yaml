@@ -4,6 +4,7 @@ metadata:
   name: mul-worker
   labels:
     app: mul-worker
+    app-role: calc-worker
 spec:
   replicas: 1
   selector:
@@ -16,10 +17,13 @@ spec:
     spec:
       containers:
         - name: mul-worker
-          image: mul-worker
-          imagePullPolicy: Never
+          image: arczipt/http-worker
+          #imagePullPolicy: Never
           ports:
             - containerPort: 5000
+          env:
+          - name: OP
+            value: MUL
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,5 +43,8 @@ spec:
     spec:
       containers:
         - name: mul-kafka-worker
-          image: mul-kafka-worker
-          imagePullPolicy: Never
+          image: arczipt/kafka-worker
+          #imagePullPolicy: Never
+          env:
+          - name: OP
+            value: MUL

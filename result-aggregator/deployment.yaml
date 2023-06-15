@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: kafka-res-agg
-          image: kafka-res-agg
-          imagePullPolicy: Never
+          image: arczipt/kafka-res-agg
+          #imagePullPolicy: Never
           ports:
             - containerPort: 5000

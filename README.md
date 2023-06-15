@@ -264,6 +264,31 @@ cilium hubble ui
 
 ![Alt text](README_files/hubble_cluster_2.png)
 
+### Network policies
+
+Deploy a network policy to both clusters
+
+```
+kubectl config use-context aws-cilium-1
+kubectl apply -f policies/workers-disable-http-access.yaml
+kubectl config use-context aws-cilium-2
+kubectl apply -f policies/workers-disable-http-access.yaml
+```
+
+Wait some time for the policies to take action. Enter application GUI and try submitting jobs. It should not work as workers' endpoints accepting jobs are disabled.
+
+Delete these policies:
+
+```
+kubectl config use-context aws-cilium-1
+kubectl apply -f policies/workers-disable-http-access.yaml
+kubectl config use-context aws-cilium-2
+kubectl apply -f policies/workers-disable-http-access.yaml
+```
+
+Again, wait some time, then enter GUI and submit some jobs. Now it should work as it used to.
+
+
 ## 9. TODO: Summary – conclusions
 
 ## 10. TODO: References

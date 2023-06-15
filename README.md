@@ -38,8 +38,6 @@ ClusterMesh is Cilium’s multi-cluster implementation that provides the followi
  - enable and observe communication between nodes across different clusters using Hubble
  - see how security policies in Cilium work (filtering access based on L4 and L7 criteria)
  - examine the shared service mechanism in multi-cluster environment
- - compare the performance of eBPF-based direct routing vs. standard encapsulation in virtual network devices
-
 
 ### High level system diagram
 ![System diagram](README_files/diag1.png "System diagram #1")
@@ -124,7 +122,7 @@ log_collector will store the logs in a text file within a persistent volume on K
 
 ## 6. Installation method
 
-### Local setup with minikube
+### Local setup with minikube (single K8S cluster)
 
 Install minikube and docker on your local machine. For example, if you are using Ubuntu, you can download them using `snap`:
 
@@ -141,22 +139,83 @@ Install Cilium and Hubble CLI by executing script:
 Start a minikube cluster and deploy a test application by executing script:
 
 ```bash
-./run.sh
+./run-minikube.sh
 ```
 
 
-### TODO: Setup on AWS
+### Setup on AWS (two K8S clusters)
+
+1. Create two EKS clusters in a shared security group. Add to it an inbound rule allowing TCP access from any IPv4 address on any port.
+
+2. For each cluster you have created, add a node group and execute:
+```bash
+aws eks --region us-east-1 update-kubeconfig --name <cluster-name>
+kubectl config rename-context <context-name> {aws-cilium-1,aws-cilium-2} # <context-name> can be obtained with "kubectl config get-contexts"
+kubectl -n kube-system delete daemonset aws-node
+```
+
+3. Install Cilium on the both clusters:
+```bash
+cilium install --context aws-cilium-1 --cluster-name aws-cilium-1 --cluster-id 1
+cilium install --context aws-cilium-2 --inherit-ca aws-cilium-1 --cluster-name aws-cilium-2 --cluster-id 2
+```
+4. Wait until everything is ready:
+```bash
+cilium status --context {aws-cilium-1,aws-cilium-2}
+```
+5. Enable ClusterMesh on both clusters:
+```bash
+cilium clustermesh enable --context aws-cilium-1 --service-type LoadBalancer
+cilium clustermesh enable --context aws-cilium-2 --service-type LoadBalancer
+```
+6. Connect clusters using ClusterMesh (only one-way is necessary):
+```bash
+cilium clustermesh connect --context aws-cilium-1 --destination-context aws-cilium-2
+```
+7. Wait until everything is ready:
+```bash
+cilium clustermesh status --context aws-cilium-1
+cilium clustermesh status --context aws-cilium-2
+```
+8. Deploy demo application:
+```bash
+kubectl config use-context aws-cilium-1
+kubectl apply -f zookeeper.yaml
+kubectl wait --for=condition=ready pod -l app=zookeeper
+kubectl apply -f kafka.yaml
+kubectl apply -f kafka-service.yaml
+kubectl wait --for=condition=ready pod -l app=kafka
+kubectl apply -f ./workers/deployment-mul.yaml
+kubectl apply -f ./workers/deployment-div.yaml
+kubectl apply -f ./workers/services.yaml
+kubectl apply -f job-submitter/deployment.yaml
+kubectl apply -f job-submitter/service.yaml
+kubectl apply -f result-aggregator/deployment.yaml
+kubectl apply -f result-aggregator/service.yaml
+
+kubectl config use-context aws-cilium-2
+kubectl apply -f kafka-service.yaml
+kubectl apply -f ./result-aggreagtor/service.yaml
+kubectl apply -f ./workers/deployment-add.yaml
+kubectl apply -f ./workers/deployment-sub.yaml
+kubectl apply -f ./workers/deployment-mul.yaml
+kubectl apply -f ./workers/deployment-div.yaml
+kubectl apply -f ./workers/services.yaml
+```
 
 
+9. Enable Hubble observability:
+```bash
+cilium hubble enable --ui --context aws-cilium-1
+cilium hubble enable --ui --context aws-cilium-2
+```
 
-## 7. TODO: How to reproduce - step by step
-  1. Infrastructure as Code approach
 
-## 8. Demo deployment steps
+## 8. Demo walkthrough
 
-### Access to application GUI
+### Open application GUI
 
-Find `job-submitter` pod name:
+Find `job-submitter` pod name (make sure you are using a context for the right cluster):
 
 ```bash
 kubectl get pods
@@ -168,18 +227,42 @@ Setup port-forwarding to local port:
 kubectl port-forward <pod-id> 8000:80
 ```
 
-Navigate to http://localhost:8000
+Navigate to http://localhost:8000.
 
-#### Access to Hubble dashboard
+
+
+
+### Access to Hubble dashboard
+
+#### Single cluster version
 
 ```bash
 cilium hubble ui
 ```
 
-In a single-cluster version this gives a view:
+In a single-cluster version this gives a view similar to this:
 
 ![Hubble screenshot](README_files/hubble_screenshot.png)
 
+#### Multi-cluster version
+
+First, observe traffic on cluster 1:
+
+```bash
+kubectl config use-context aws-cilium-1
+cilium hubble ui
+```
+
+![hubble-cluster-1](README_files/hubble_cluster_1.png)
+
+Then, see traffic on cluster 2. Notice Kafka shared service is available here even though its pod is deployed in cluster 1.
+
+```bash
+kubectl config use-context aws-cilium-2
+cilium hubble ui
+```
+
+![Alt text](README_files/hubble_cluster_2.png)
 
 ## 9. TODO: Summary – conclusions
 

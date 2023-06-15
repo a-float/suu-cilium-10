@@ -40,13 +40,8 @@ ClusterMesh is Cilium’s multi-cluster implementation that provides the followi
  - examine the shared service mechanism in multi-cluster environment
 
 ### High level system diagram
-![System diagram](README_files/diag1.png "System diagram #1")
-
-Components communicating through Kafka
-
-![System diagram](README_files/diag2.png "System diagram #2")
-
-Components communicating through HTTP/HTTPS
+On the diagram below the two cluster demo system architecture is presented. One can observe the Job submitter entrypoint, Kafka setup with Zookeeper as well as http communication with workers and communication using kafka with the kafka workers.
+![System diagram](README_files/diagram.png "System diagram")
 
 ## 4. Technology selection
 
@@ -289,6 +284,13 @@ kubectl apply -f policies/workers-disable-http-access.yaml
 Again, wait some time, then enter GUI and submit some jobs. Now it should work as it used to.
 
 
-## 9. TODO: Summary – conclusions
+## 9. Summary – conclusions
+Cillium proved to be usefull in setting up the prepared infrastructure. It helped us establish multi-cluster connection via clustermesh, as well as formulate and implement precise security policies. Thanks to Hubble we were able to track how those policies affect communication as well as the overall architecture structure and relation between deployed services.
 
-## 10. TODO: References
+We had an opportunity to learn about cillium and its capabilities and are looking forward to making use of it in our future projects.
+
+## 10. References
+- Cilium information: https://cilium.io/get-started/, access date: 31 Mar, 2023
+- Hubble https://github.com/cilium/hubble, access date: 31 Mar, 2023
+- Setting up Kafka communication: https://blog.datumo.io/setting-up-kafka-on-kubernetes-an-easy-way-26ae150b9ca8, access date, access date: 01 Jun, 2023
+- Cillium on EKS: https://aws.amazon.com/blogs/containers/a-multi-cluster-shared-services-architecture-with-amazon-eks-using-cilium-clustermesh/, access date: 8 Jun, 2023

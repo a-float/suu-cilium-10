@@ -4,6 +4,7 @@ metadata:
   name: sub-worker
   labels:
     app: sub-worker
+    app-role: calc-worker
 spec:
   replicas: 1
   selector:
@@ -16,8 +17,8 @@ spec:
     spec:
       containers:
         - name: sub-worker
-          image: http-worker
-          imagePullPolicy: Never
+          image: arczipt/http-worker
+          #imagePullPolicy: Never
           ports:
             - containerPort: 5000
           env:
@@ -42,8 +43,8 @@ spec:
     spec:
       containers:
         - name: sub-kafka-worker
-          image: kafka-worker
-          imagePullPolicy: Never
+          image: arczipt/kafka-worker
+          #imagePullPolicy: Never
           env:
           - name: OP
             value: SUB

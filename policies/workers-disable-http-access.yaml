@@ -1,0 +1,21 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "http-workers-rule"
+spec:
+  description: "Allow HTTP GET /public"
+  endpointSelector:
+    matchLabels:
+      app-role: calc-worker
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: job-submitter
+    toPorts:
+    - ports:
+      - port: "5000"
+        protocol: TCP
+      rules:
+        http:
+        - method: "GET"
+          path: "/public"

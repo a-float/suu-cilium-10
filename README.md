@@ -112,30 +112,6 @@ In cluster 1, we also deploy Kafka with Zookeeper. We configure 4 topics in Kafk
 Kafka has a shared Cilium service associated with it so that it is accessible from both clusters
 
 
-### Clusters 2
-
-We will use two clusters for workers:
- - 3a: **addition_worker** and **subtraction_worker**
- - 3b: **multiplication** and **division_worker**
-
-Each worker will expose two interfaces to process requests:
-
- - Kafka interface:
-   - consume a message with a job payload and job id from a worker-specific Kafka topic (e. g. `addition_requests` topic for `addition_worker`)
-   - produce a message with a job result and job id to `results` topic
-
-
-Also, each worker will expose an HTTP GET endpoint `/about` with a static HTML response.
-
-### Shared service for clusters 1, 3a and 3b
-
-**log_collector** should be a service available on all three clusters: 1, 3a and 3b. It will expose two REST endpoints:
- - `/save_log` - workers will use it to save logs about operations (payload and result)
- - `/logs` - users will use it to read logs 
-
-log_collector will store the logs in a text file within a persistent volume on Kubernetes
-
-
 ## 6. Installation method
 
 ### Local setup with minikube (single K8S cluster)

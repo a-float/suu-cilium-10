@@ -66,32 +66,53 @@ We will select **Python** as our implementation language because of its simplici
 
 ## 5. Initial configuration description
 
-Our infrastructure will contain of 3 or 4 K8s clusters (depending on setup we choose):
+In a local setup we only use one Kubernetes cluster. In AWS, we use two clusters.
 
-### Cluster 1: Client-interaction cluster
+### HTTP workers
 
-This cluster will contain the services that the clients will be able to communicate with via HTTP requests
+Each of: **add_worker**, **sub_worker**, **mul_worker**, **div_worker** expose an HTTP GET endpoint `/calc` with job payload as a URL parameter. This endpoint returns synchronously the job result.
 
-**job_submitter** is the most important service. It will expose an endpoint called `/submit`. In request payload, user can specify:
+**add_worker** and **sub_worker** are deployed to cluster 2 and are accessible from cluster 1 in a shared Cilium service. In contrast, **mul_worker** and **div_worker** have only a usual non-shared Kubernetes service associated with them so they are deployed to both clusters.
+
+### Kafka workers
+
+Kafka workers: **add_kafka_worker**, **sub_kafka_worker**, **mul_kafka_worker**, **div_kafka_worker** read job payloads from their respective Kafka topics and save results by sending an HTTP request to **result_aggregator**. Kafka workers are deployed to cluster 1 (mul, div) and cluster 2 (add, sub, mul, div).
+
+### Result aggregator
+
+**result_aggregator** saves jobs results sent by Kafka workers and allows to fetch them via HTTP requests. It has a shared service assoiciated with it so it can be accessed from both clusters.
+
+### Job submitter
+
+**job_submitter** is the most important service.
+
+
+It exposes an endpoint called `/submit`, accessible from the Internet. In request payload, user can specify:
  - operation type (addition, subtraction, multiplication, division)
  - two integers as input to an operation
  - communication mechanism that job_submitter should use to communicate with a worker(`http` or `kafka`)
 
-**help_page** on each request will send requests to all workers and return a static HTML page composed from `/about` responses of all workers
+It also provides a user-friendly web interface where user can specify operation along with its parameters and submit jobs. 
+ 
+If a user chooses Kafka communication mechanism, the GUI does not return a result synchronously. Instead, user has to check the `/results` endpoint. Upon receiving a request to this endpoint, **job_submitter** sends a request to **result_aggregator**, checking for a job result and returns its response.
+ 
+**job_submitter** is deployed to cluster 1.
 
-### Cluster 2: Kafka cluster (either hosted on K8S or provided by Amazon MSK)
+### Kafka
 
-We will configure 5 topics in Kafka:
+In cluster 1, we also deploy Kafka with Zookeeper. We configure 4 topics in Kafka:
 
 | topic | producer services | consumer services |
 |-------|-----------|-----------|
-| addition_requests | job_submitter | addition_worker |
-| subtration_requests | job_submitter | subtraction_worker |
-| multiplication_requests | job_submitter | multiplication_worker |
-| division_requests | job_submitter | division_worker |
-| results | addition_worker, subtraction_worker, multiplication_worker, division_worker| job_submitter
+| add | job_submitter | add_kafka_worker |
+| sub | job_submitter | sub_kafka_worker |
+| mul | job_submitter | mul_kafka_worker |
+| div | job_submitter | div_kafka_worker |
 
-### Clusters 3a & 3b: Worker clusters
+Kafka has a shared Cilium service associated with it so that it is accessible from both clusters
+
+
+### Clusters 2
 
 We will use two clusters for workers:
  - 3a: **addition_worker** and **subtraction_worker**
@@ -102,7 +123,7 @@ Each worker will expose two interfaces to process requests:
  - Kafka interface:
    - consume a message with a job payload and job id from a worker-specific Kafka topic (e. g. `addition_requests` topic for `addition_worker`)
    - produce a message with a job result and job id to `results` topic
- - HTTP GET endpoint with job payload as a URL parameter
+
 
 Also, each worker will expose an HTTP GET endpoint `/about` with a static HTML response.
 
